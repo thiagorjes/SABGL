@@ -26,21 +26,23 @@ To validate the proposed system for the global localization problem, a set of ex
 |[![alt text](datasets/plots/figure-ensemble-accuracy-2014-2012.png)](datasets/plots/figure-ensemble-accuracy-2014-2012.png)|
 :-------------:
 |**a**|
+
 |[![alt text](datasets/plots/figure-vgram-accuracy-2014-2012.png)](datasets/plots/figure-vgram-accuracy-2014-2012.png)|
 :-------------:
 |**b**|
-:-------------:
+
 |**Fig. 1. Classification accuracy of SABGL (a) and VibGL (b) for different Maximum Allowed Error (MAE) in frames using UFES-2014 dataset for training an the UFES-2012 dataset for test.**|
 
 ### True and False Positives
 
-|[![alt text](datasets/plots/figure-ensemble-positives-2014-2012.png)](datasets/plots/figure-ensemble-positives-2014-2012.png)|
+|[![alt text](datasets/plots/figure-ensemble-positives-2014-2012-1-1.png)](datasets/plots/figure-ensemble-positives-2014-2012-1-1.png)|
 :-------------:
 |**a**|
-|[![alt text](datasets/plots/figure-vgram-positives-2014-2012.png)](datasets/plots/figure-vgram-positives-2014-2012.png)|
+
+|[![alt text](datasets/plots/figure-vgram-positives-2014-2012-1-1.png)](datasets/plots/figure-vgram-positives-2014-2012-1-1.png)|
 :-------------:
 |**b**|
-:-------------:
+
 |**Fig. 2. True and false positives for SABGL (a) and VibGL (b) using 1-meter spacing UFES-2014 dataset for training and 1-meter spacing UFES- 2012 dataset for test. Blue dots represent true positives (TP); lines connect false positives (FP) represented by red circles and their respective ground-truth correspondences represented by green crosses (CORR)**|
 
 ## Video demonstration
