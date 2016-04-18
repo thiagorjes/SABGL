@@ -1,0 +1,7 @@
+from distutils.core import setup
+
+setup (name = 'vgram',
+       version = '${PACKAGE_VERSION}',
+       description = 'VG-RAM Weightless Neural Network Library',
+       package_dir={ 'vgram': '${CMAKE_CURRENT_SOURCE_DIR}' },
+      packages=['vgram'])
