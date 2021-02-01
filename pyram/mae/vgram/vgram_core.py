@@ -1,8 +1,8 @@
 import numpy as np
 from vgram_wrapper import VG_RAM_WNN, DATA_SET
 from datetime import datetime
-from vgram.vgram_image import ImageProcProxy
-from example_placerecog_config import params
+from pyram.mae.vgram.vgram_image import ImageProcProxy
+from pyram.mae.examples.example_placerecog_config import params
 import cv2
 from random import uniform
 
@@ -47,6 +47,7 @@ class VGRAM(object):
                                                                                             ('timestamp', object)]))
 
         for sample in xrange(file_list.shape[0]):
+            print "iterate:",sample
             if not stereo_mode :
                 orig_image_file     = ImageProcProxy.readImageColor(file_list['image'][sample])
                 image_file          = cv2.resize(orig_image_file, (params['input']['width'],params['input']['height']))
@@ -81,6 +82,7 @@ class VGRAM(object):
                                                                                             ('timestamp', object)]))
 
         for sample in xrange(file_list.shape[0]):
+            print "iterate:",sample
             if not stereo_mode :
                 orig_image_file     = ImageProcProxy.readImageColor(file_list['image'][sample])
                 image_file          = cv2.resize(orig_image_file, (params['input']['width'],params['input']['height']))
@@ -100,7 +102,7 @@ class VGRAM(object):
             output = self.neural_network.Test(input_image, input_class, sample)
 
         self.neural_network.DeallocateNetworkOutput()
-        return output
+        return output, file_list['label']
     
     def testSequence(self, input_data, step_list):
         self.neural_network.test_size = input_data.shape[0] 
