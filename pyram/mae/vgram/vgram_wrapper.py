@@ -65,8 +65,9 @@ class VG_RAM_WNN(ctypes.Structure):
         cCreateSynapsesGaussian(ctypes.byref(self), synapses, offset, input_offset, input_width, input_height, output_width, output_height,
                                gaussian_radius, same_interconnection_pattern)
     
-    def Train(self, training_data):
-        cTrain(ctypes.byref(self), ctypes.byref(training_data))
+    def Train(self, input_image, input_class, sample):
+        inputDataTemp = np.ascontiguousarray(input_image, dtype=np.int32)
+        cTrain(ctypes.byref(self), inputDataTemp, input_class, sample)        
     
     def Unload(self, filename):
         network_memory = ctypes2numpy(self.memories, self.number_of_neurons * self.memory_size * (self.memory_bit_group_size + 1) )
@@ -105,8 +106,9 @@ class VG_RAM_WNN(ctypes.Structure):
         
         numpy2ctypes(self.memories, np.ascontiguousarray(network_memory, dtype=np.int32))
     
-    def Test(self, testing_data):
-        cTest(ctypes.byref(self), ctypes.byref(testing_data))
+    def Test(self, input_image, input_class, sample):
+        inputDataTemp = np.ascontiguousarray(input_image, dtype=np.int32)
+        cTest(ctypes.byref(self), inputDataTemp, input_class, sample)  
         return ctypes2numpy(self.network_output, self.number_of_neurons * self.test_size)
     
     def TestSequence(self, testing_data, step_list):
@@ -191,10 +193,10 @@ cCreateSynapsesGaussian.argtypes    = [ctypes.POINTER(VG_RAM_WNN), ctypes.c_int,
                                        ctypes.c_double, ctypes.c_bool]
 
 cTrain                              = libvgram.Train
-cTrain.argtypes                     = [ctypes.POINTER(VG_RAM_WNN), ctypes.POINTER(DATA_SET)]
+cTrain.argtypes                     = [ctypes.POINTER(VG_RAM_WNN), array_1d_int, ctypes.c_int, ctypes.c_int]
 
 cTest                               = libvgram.Test
-cTest.argtypes                      = [ctypes.POINTER(VG_RAM_WNN), ctypes.POINTER(DATA_SET)]
+cTest.argtypes                      = [ctypes.POINTER(VG_RAM_WNN), array_1d_int, ctypes.c_int, ctypes.c_int]
 
 cTestSequence                       = libvgram.TestSequence
 cTestSequence.argtypes              = [ctypes.POINTER(VG_RAM_WNN), ctypes.POINTER(DATA_SET), array_1d_int, ctypes.c_int]

@@ -1,16 +1,16 @@
-from mae.vgram.vgram_core import VGRAM
-from mae.vgram.vgram_output import NetworkOutput
-from mae.vgram.vgram_synapse import ConnectionGaussian, ConnectionRandom, ConnectionInput
-from example_placerecog_utils import LoadDataset, ClearFalseNegatives, EvaluateOutput
+from vgram.vgram_core import VGRAM
+from vgram.vgram_output import NetworkOutput
+from vgram.vgram_synapse import ConnectionGaussian, ConnectionRandom, ConnectionInput
+from example_placerecog_utils import LoadDatasetBaidu, ClearFalseNegatives, EvaluateOutput
 from example_placerecog_config import params
 import numpy as np
 
 def run_vgram(train_filename, train_path, test_filename, test_path, 
               result_filename, output_filename, coords_filename,
               batch_size):
-    #print "entrou"
+    print "entrou"
     network = VGRAM(params['output']['width'], params['output']['height'])
-    #print "carregou parametros"
+    print "carregou parametros"
     network.connections = [
                            ConnectionRandom(input_layer=ConnectionInput(params['input']['width'], params['input']['height'], 0),
                                             synapses=params['connection_rand']['synapses']),
@@ -18,17 +18,16 @@ def run_vgram(train_filename, train_path, test_filename, test_path,
                                               synapses=params['connection_gaus']['synapses'], 
                                               radius=params['connection_gaus']['radius'])
                            ]
-
-    memory_size, input_size, num_samples = LoadDataset(train_filename, train_path)
+    
+    memory_size, input_size, num_samples = LoadDatasetBaidu(train_filename, train_path)
     print 'Train size:', memory_size, input_size, num_samples, filename  
 
-    network.train(memory_size, input_size, num_samples, filename,True)
+    network.train(memory_size, input_size, num_samples, filename,False)
 
-    memory_size, input_size, num_samples  = LoadDataset(test_filename, test_path)
+    memory_size, input_size, num_samples  = LoadDatasetBaidu(test_filename, test_path)
     print 'Test size:', memory_size, input_size, num_samples, filename  
     
-    output_data = network.test(memory_size, input_size, num_samples, filename,True)
-    
+    output_data = network.test(memory_size, input_size, num_samples, filename,False)
     
     '''the output computed below takes the closest of top 3 most voted, which is closest to the previous'''
     #pred_label = NetworkOutput.MajorityVoteClosestToPrevious(output_data, test_label.shape[0])

@@ -92,9 +92,13 @@ void CreateSynapsesGaussian(VG_RAM_WNN *vg_ram_wnn, int nun_inputs_per_neuron, i
 		int input_offset, int input_width, int input_height, int output_width, int output_height,
 		double gaussian_radius, bool same_interconnection_pattern);
 
-void Train(VG_RAM_WNN *vg_ram_wnn, DATA_SET *training_set);
+void Train(VG_RAM_WNN *vg_ram_wnn, int *training_set, int sample_class_i, int idx);
 
-void Test(VG_RAM_WNN *vg_ram_wnn, DATA_SET *testing_set);
+void TrainAll(VG_RAM_WNN *vg_ram_wnn, DATA_SET *training_set);
+
+void Test(VG_RAM_WNN *vg_ram_wnn, int *testing_set, int sample_class_i, int idx);
+
+void TestAll(VG_RAM_WNN *vg_ram_wnn, DATA_SET *testing_set);
 
 void TestSequence(VG_RAM_WNN *vg_ram_wnn, DATA_SET *testing_set, int *step_list, int step_list_size);
 

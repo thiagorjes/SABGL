@@ -20,6 +20,7 @@ AllocMemory (size_t size)
 void
 SetNeuronMemory(int *mem, int memory_size, int memory_bit_group_size, int neuron, int sample, int value)
 {
+	//printf("set neuron memory %d\n",(neuron * memory_size + sample) * (memory_bit_group_size+1) + memory_bit_group_size);
 	mem[(neuron * memory_size + sample) * (memory_bit_group_size+1) + memory_bit_group_size] = value;
 }
 
@@ -59,15 +60,18 @@ BuildBitPattern(unsigned int *bit_pattern, int *synapses, int *network_input, in
 	int synapse;
 	int current_bit_pattern_group;
 	int bit_value;
-
+//	printf("buildbitpattern\n");
 	current_bit_pattern_group = -1;
 	for (synapse = 0; synapse < number_of_synapses_per_neuron; synapse++)
 	{
+//		printf("entrei\n");
 		shift=synapse % PATTERN_UNIT_SIZE;
+//		printf("shift\n");
 		current_bit_pattern_group=synapse / PATTERN_UNIT_SIZE;
+//		printf("current_bit\n");
 		if (!shift)
 			bit_pattern[current_bit_pattern_group] = 0; // Se começou um novo grupo, zero o mesmo.
-
+//		printf("segundo if\n");
 		if (synapse == (number_of_synapses_per_neuron - 1))
 			// Minchington: Última sinapse compara com a primeira
 			bit_value = (network_input[synapses[synapse]] > network_input[synapses[0]]) ? 1 : 0;
@@ -75,9 +79,13 @@ BuildBitPattern(unsigned int *bit_pattern, int *synapses, int *network_input, in
 		else
 		{	// Minchington: Uma sinapse compara com a próxima
 			bit_value = (network_input[synapses[synapse]] > network_input[synapses[synapse+1]]) ? 1 :0;
+//			printf("else\n");
 		}
+//		printf("saindo\n");
 		// Novos bits são inseridos na parte alta do padrão de bits.
 		bit_pattern[current_bit_pattern_group] |= bit_value << shift;
+//		printf("saí\n");
+
 	}
 	// Novos bits são inseridos na parte alta do padrão de bits. Assim, ao fim da inserção, alinha os bits junto a parte baixa.
 

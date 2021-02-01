@@ -1,4 +1,10 @@
+import numpy as np
 from vgram_wrapper import VG_RAM_WNN, DATA_SET
+from datetime import datetime
+from vgram.vgram_image import ImageProcProxy
+from example_placerecog_config import params
+import cv2
+from random import uniform
 
 class VGRAM(object):
     connectionList = []
@@ -26,37 +32,74 @@ class VGRAM(object):
             input_offset = input_offset + connection.input_layer.offset_size()
             synapse_offset = synapse_offset + connection.synapses
 
-    def train(self, input_data, class_data):
-        self.neural_network.memory_size = input_data.shape[0] 
-        self.neural_network.input_size = input_data.shape[1]
-        self.training_data = DATA_SET(self.neural_network.memory_size, self.neural_network.input_size)
-        self.training_data.InitializeDataSet()
-        self.training_data.AllocateDataSet()
-        self.training_data.CopyDataSetFrom(input_data, class_data)
-
+    def train(self, memory_size, input_size, num_samples, filename,stereo_mode):
+        self.neural_network.memory_size = memory_size   
+        self.neural_network.input_size = input_size        
         self.neural_network.AllocateNetworkMemories() 
-        self.neural_network.Train(self.training_data)
+        file_list = np.genfromtxt(filename, delimiter=',', names=True, dtype=np.dtype([('image',object), 
+                                                                                            ('label', int), 
+                                                                                            ('x', float), 
+                                                                                            ('y', float), 
+                                                                                            ('z',float),
+                                                                                            ('rx', float), 
+                                                                                            ('ry', float), 
+                                                                                            ('rz',float), 
+                                                                                            ('timestamp', object)]))
 
-        self.training_data.DeallocateDataSet()
-        del(self.training_data)
+        for sample in xrange(file_list.shape[0]):
+            if not stereo_mode :
+                orig_image_file     = ImageProcProxy.readImageColor(file_list['image'][sample])
+                image_file          = cv2.resize(orig_image_file, (params['input']['width'],params['input']['height']))
+                image_crop          = image_file 
+            else:
+                image_file          = ImageProcProxy.readImageColor(file_list['image'][sample])
+                image_crop          = ImageProcProxy.cropImage(image_file, 0, 0, params['input']['width'], params['input']['height'])
+            image_gaus          = ImageProcProxy.applyGaussian(image_crop, 
+                                        params['filter']['gaussian_radius'], 
+                                        params['filter']['gaussian_sigma'])
+            image_crop_int      = ImageProcProxy.convertBGR2INT(image_crop)
+            image_gaus_int      = ImageProcProxy.convertBGR2INT(image_gaus)
+            image_crop_vec      = ImageProcProxy.flattenImage(image_crop_int)
+            image_gaus_vec      = ImageProcProxy.flattenImage(image_gaus_int)
+            input_image = ImageProcProxy.concatImages(image_crop_vec, image_gaus_vec)
+            input_class = file_list['label'][sample]
+            self.neural_network.Train( input_image, input_class, sample)
+        
 
-    def test(self, input_data, class_data):
-        self.neural_network.test_size = input_data.shape[0] 
-        self.neural_network.input_size = input_data.shape[1]
-        
-        self.testing_data = DATA_SET(self.neural_network.test_size, self.neural_network.input_size)
-        self.testing_data.InitializeDataSet()
-        self.testing_data.AllocateDataSet()
-        self.testing_data.CopyDataSetFrom(input_data, class_data)
-        
+    def test(self,  memory_size, input_size, num_samples, filename,stereo_mode):
+        self.neural_network.test_size = memory_size
+        self.neural_network.input_size = input_size
         self.neural_network.AllocateNetworkOutput(self.neural_network.test_size * self.neural_network.number_of_neurons)
-        
-        output = self.neural_network.Test(self.testing_data)
-        
+        file_list = np.genfromtxt(filename, delimiter=',', names=True, dtype=np.dtype([('image',object), 
+                                                                                            ('label', int), 
+                                                                                            ('x', float), 
+                                                                                            ('y', float), 
+                                                                                            ('z',float),
+                                                                                            ('rx', float), 
+                                                                                            ('ry', float), 
+                                                                                            ('rz',float), 
+                                                                                            ('timestamp', object)]))
+
+        for sample in xrange(file_list.shape[0]):
+            if not stereo_mode :
+                orig_image_file     = ImageProcProxy.readImageColor(file_list['image'][sample])
+                image_file          = cv2.resize(orig_image_file, (params['input']['width'],params['input']['height']))
+                image_crop          = image_file 
+            else:
+                image_file          = ImageProcProxy.readImageColor(file_list['image'][sample])
+                image_crop          = ImageProcProxy.cropImage(image_file, 0, 0, params['input']['width'], params['input']['height'])
+            image_gaus          = ImageProcProxy.applyGaussian(image_crop, 
+                                        params['filter']['gaussian_radius'], 
+                                        params['filter']['gaussian_sigma'])
+            image_crop_int      = ImageProcProxy.convertBGR2INT(image_crop)
+            image_gaus_int      = ImageProcProxy.convertBGR2INT(image_gaus)
+            image_crop_vec      = ImageProcProxy.flattenImage(image_crop_int)
+            image_gaus_vec      = ImageProcProxy.flattenImage(image_gaus_int)
+            input_image = ImageProcProxy.concatImages(image_crop_vec, image_gaus_vec)
+            input_class = file_list['label'][sample]
+            output = self.neural_network.Test(input_image, input_class, sample)
+
         self.neural_network.DeallocateNetworkOutput()
-        self.testing_data.DeallocateDataSet()
-        del(self.testing_data)
-        
         return output
     
     def testSequence(self, input_data, step_list):

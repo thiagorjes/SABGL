@@ -41,7 +41,7 @@ main (int argc, char *argv[])
 
 	LoadSynapticInterconnectionPattern(argv[2], &vg_ram_wnn);
 
-	Train(&vg_ram_wnn, &training_set);
+	TrainAll(&vg_ram_wnn, &training_set);
 
 	//Save(&host_vg_ram_wnn, &host_training_set, "memory_seq.log");
 
@@ -51,7 +51,7 @@ main (int argc, char *argv[])
 
 	AllocateNetworkOutput(&vg_ram_wnn, vg_ram_wnn.test_size * vg_ram_wnn.number_of_neurons, 0);
 
-	Test(&vg_ram_wnn, &testing_set);
+	TestAll(&vg_ram_wnn, &testing_set);
 
 	printf("Fim do teste.\n");
 

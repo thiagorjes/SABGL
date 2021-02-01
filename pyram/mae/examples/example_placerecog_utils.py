@@ -1,35 +1,68 @@
 import numpy as np
 from pyram.mae.vgram.vgram_image import ImageProcProxy
 from example_placerecog_config import params
+import cv2
 from random import uniform
 
-def LoadDataset(filename, imagepath):
-    file_list = np.genfromtxt(filename, delimiter=',', names=True, dtype=np.dtype([('timestamp', object), ('x', float), ('y', float), ('label', int)]))
+def LoadDatasetBaidu(filename):
+    file_list = np.genfromtxt(filename, delimiter=',', names=True, dtype=np.dtype([('image',object), 
+                                                                                            ('label', int), 
+                                                                                            ('x', float), 
+                                                                                            ('y', float), 
+                                                                                            ('z',float),
+                                                                                            ('rx', float), 
+                                                                                            ('ry', float), 
+                                                                                            ('rz',float), 
+                                                                                            ('timestamp', object)]))
 
-    input_images = ImageProcProxy.emptyDataset(file_list.shape[0], 
-                                               params['input']['width'] * 2, 
-                                               params['input']['height'])
-    for sample in xrange(file_list.shape[0]):
-        image_file          = ImageProcProxy.readImageColor(imagepath + file_list['timestamp'][sample] + '.bb08.l.png')
-        image_crop          = ImageProcProxy.cropImage(image_file, 0, 0, 
-                                                       params['input']['width'], 
-                                                       params['input']['height'])
-        image_gaus          = ImageProcProxy.applyGaussian(image_crop, 
-                                    params['filter']['gaussian_radius'], 
-                                    params['filter']['gaussian_sigma'])
-        image_crop_int      = ImageProcProxy.convertBGR2INT(image_crop)
-        image_gaus_int      = ImageProcProxy.convertBGR2INT(image_gaus)
-        image_crop_vec      = ImageProcProxy.flattenImage(image_crop_int)
-        image_gaus_vec      = ImageProcProxy.flattenImage(image_gaus_int)
-        input_images[sample]= ImageProcProxy.concatImages(image_crop_vec, image_gaus_vec)
-    return input_images, file_list['label'], file_list['x'], file_list['y']
+    input_images = ImageProcProxy.emptyDataset(file_list.shape[0], params['input']['width'] * 2, params['input']['height'])
+    orig_image_file     = ImageProcProxy.readImageColor(file_list['image'][0])
+    image_file          = cv2.resize(orig_image_file, (params['input']['width'],params['input']['height']))
+    image_crop          = image_file 
+    image_gaus          = ImageProcProxy.applyGaussian(image_crop, params['filter']['gaussian_radius'], params['filter']['gaussian_sigma'])
+    image_crop_int      = ImageProcProxy.convertBGR2INT(image_crop)
+    image_gaus_int      = ImageProcProxy.convertBGR2INT(image_gaus)
+    image_crop_vec      = ImageProcProxy.flattenImage(image_crop_int)
+    image_gaus_vec      = ImageProcProxy.flattenImage(image_gaus_int)
+    input_images[0]= ImageProcProxy.concatImages(image_crop_vec, image_gaus_vec)
+    return file_list.shape[0],  input_images.shape[1], file_list.shape[0]
+
+def LoadDataset(filename, imagepath):
+    file_list = np.genfromtxt(filename, delimiter=',', names=True, dtype=np.dtype([('image',object), 
+                                                                                            ('label', int), 
+                                                                                            ('x', float), 
+                                                                                            ('y', float), 
+                                                                                            ('z',float),
+                                                                                            ('rx', float), 
+                                                                                            ('ry', float), 
+                                                                                            ('rz',float), 
+                                                                                            ('timestamp', object)]))
+
+    input_images = ImageProcProxy.emptyDataset(file_list.shape[0], params['input']['width'] * 2, params['input']['height'])
+    image_file          = ImageProcProxy.readImageColor(file_list['image'][0])
+    image_crop          = ImageProcProxy.cropImage(image_file, 0, 0, params['input']['width'], params['input']['height'])
+    image_gaus          = ImageProcProxy.applyGaussian(image_crop, params['filter']['gaussian_radius'], params['filter']['gaussian_sigma'])
+    image_crop_int      = ImageProcProxy.convertBGR2INT(image_crop)
+    image_gaus_int      = ImageProcProxy.convertBGR2INT(image_gaus)
+    image_crop_vec      = ImageProcProxy.flattenImage(image_crop_int)
+    image_gaus_vec      = ImageProcProxy.flattenImage(image_gaus_int)
+    input_images[0]= ImageProcProxy.concatImages(image_crop_vec, image_gaus_vec)
+    return file_list.shape[0],  input_images.shape[1], file_list.shape[0]
 
 def LoadDatasetAndCropImages(filename, imagepath):
-    file_list = np.genfromtxt(filename, delimiter=',', names=True, dtype=np.dtype([('timestamp', object), ('x', float), ('y', float), ('label', int)]))
+    file_list = np.genfromtxt(filename, delimiter=',', names=True, dtype=np.dtype([('image',object), 
+                                                                                            ('label', int), 
+                                                                                            ('x', float), 
+                                                                                            ('y', float), 
+                                                                                            ('z',float),
+                                                                                            ('rx', float), 
+                                                                                            ('ry', float), 
+                                                                                            ('rz',float), 
+                                                                                            ('timestamp', object)]))
 
     input_images = np.zeros((file_list.shape[0], params['input']['height'], params['input']['width'], 3), dtype=np.uint8)
     for sample in xrange(file_list.shape[0]):
-        image_file          = ImageProcProxy.readImageColor(imagepath + file_list['timestamp'][sample] + '.bb08.l.png')
+        image_file          = ImageProcProxy.readImageColor(file_list['image'][sample])
         image_crop          = ImageProcProxy.cropImage(image_file, 0, 0, 
                                                        params['input']['width'], 
                                                        params['input']['height'])
