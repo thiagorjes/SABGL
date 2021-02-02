@@ -47,7 +47,8 @@ class VGRAM(object):
                                                                                             ('timestamp', object)]))
 
         for sample in xrange(file_list.shape[0]):
-            print "iterate:",sample
+            if not sample%100:
+                print "iterate:",sample
             if not stereo_mode :
                 orig_image_file     = ImageProcProxy.readImageColor(file_list['image'][sample])
                 image_file          = cv2.resize(orig_image_file, (params['input']['width'],params['input']['height']))
@@ -82,7 +83,8 @@ class VGRAM(object):
                                                                                             ('timestamp', object)]))
 
         for sample in xrange(file_list.shape[0]):
-            print "iterate:",sample
+            if not sample%100:
+                print "iterate:",sample
             if not stereo_mode :
                 orig_image_file     = ImageProcProxy.readImageColor(file_list['image'][sample])
                 image_file          = cv2.resize(orig_image_file, (params['input']['width'],params['input']['height']))

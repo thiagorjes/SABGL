@@ -1,5 +1,5 @@
-#from example_placerecog_dtw import run_ensemble
-#from example_placerecog_dtw2 import run_ensemble2
+from example_placerecog_dtw import run_ensemble
+from example_placerecog_dtw2 import run_ensemble2
 from example_placerecog import run_vgram
 
 if __name__ == '__main__':
@@ -20,13 +20,13 @@ if __name__ == '__main__':
     coords_filename = 'coords-'+str(year_for_training)+'-'+str(year_for_testing)+'-vgram-' + str(offset_for_training) + '-' + str(offset_for_testing) + '.txt'
     run_vgram(train_filename, train_path, test_filename, test_path, result_filename, output_filename, coords_filename, batch_size=length)
     
-    # result_filename = 'result-'+str(year_for_training)+'-'+str(year_for_testing)+'-ensemble-' + str(offset_for_training) + '-' + str(offset_for_testing) + '.txt'
-    # output_filename = 'output-'+str(year_for_training)+'-'+str(year_for_testing)+'-ensemble-' + str(offset_for_training) + '-' + str(offset_for_testing) + '.txt'
-    # coords_filename = 'coords-'+str(year_for_training)+'-'+str(year_for_testing)+'-ensemble-' + str(offset_for_training) + '-' + str(offset_for_testing) + '.txt'
-    # run_ensemble(train_filename, train_path, test_filename, test_path, result_filename, output_filename, coords_filename, batch_size=length, step_size=0)
+    result_filename = 'result-'+str(year_for_training)+'-'+str(year_for_testing)+'-ensemble-' + str(offset_for_training) + '-' + str(offset_for_testing) + '.txt'
+    output_filename = 'output-'+str(year_for_training)+'-'+str(year_for_testing)+'-ensemble-' + str(offset_for_training) + '-' + str(offset_for_testing) + '.txt'
+    coords_filename = 'coords-'+str(year_for_training)+'-'+str(year_for_testing)+'-ensemble-' + str(offset_for_training) + '-' + str(offset_for_testing) + '.txt'
+    run_ensemble(train_filename, train_path, test_filename, test_path, result_filename, output_filename, coords_filename, batch_size=length, step_size=0)
     
-    # result_filename = 'result-'+str(year_for_training)+'-'+str(year_for_testing)+'-ensemble2-' + str(offset_for_training) + '-' + str(offset_for_testing) + '.txt'
-    # output_filename = 'output-'+str(year_for_training)+'-'+str(year_for_testing)+'-ensemble2-' + str(offset_for_training) + '-' + str(offset_for_testing) + '.txt'
-    # coords_filename = 'coords-'+str(year_for_training)+'-'+str(year_for_testing)+'-ensemble2-' + str(offset_for_training) + '-' + str(offset_for_testing) + '.txt'
-    # run_ensemble2(train_filename, train_path, test_filename, test_path, result_filename, output_filename, coords_filename, batch_size=length, step_size=0)
+    result_filename = 'result-'+str(year_for_training)+'-'+str(year_for_testing)+'-ensemble2-' + str(offset_for_training) + '-' + str(offset_for_testing) + '.txt'
+    output_filename = 'output-'+str(year_for_training)+'-'+str(year_for_testing)+'-ensemble2-' + str(offset_for_training) + '-' + str(offset_for_testing) + '.txt'
+    coords_filename = 'coords-'+str(year_for_training)+'-'+str(year_for_testing)+'-ensemble2-' + str(offset_for_training) + '-' + str(offset_for_testing) + '.txt'
+    run_ensemble2(train_filename, train_path, test_filename, test_path, result_filename, output_filename, coords_filename, batch_size=length, step_size=0)
         

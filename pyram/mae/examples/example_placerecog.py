@@ -8,9 +8,9 @@ import numpy as np
 def run_vgram(train_filename, train_path, test_filename, test_path, 
               result_filename, output_filename, coords_filename,
               batch_size):
-    #print "entrou"
+    
     network = VGRAM(params['output']['width'], params['output']['height'])
-    #print "carregou parametros"
+    
     network.connections = [
                            ConnectionRandom(input_layer=ConnectionInput(params['input']['width'], params['input']['height'], 0),
                                             synapses=params['connection_rand']['synapses']),
@@ -19,17 +19,16 @@ def run_vgram(train_filename, train_path, test_filename, test_path,
                                               radius=params['connection_gaus']['radius'])
                            ]
 
-    memory_size, input_size, num_samples = LoadDataset(train_filename, train_path)
+    memory_size, input_size, num_samples = LoadDataset(train_filename)
     print 'Train size:', memory_size, input_size, num_samples, train_filename  
 
     network.train(memory_size, input_size, num_samples, train_filename,True)
 
-    memory_size, input_size, num_samples  = LoadDataset(test_filename, test_path)
+    memory_size, input_size, num_samples  = LoadDataset(test_filename)
     print 'Test size:', memory_size, input_size, num_samples, test_filename  
     
     output_data, test_label = network.test(memory_size, input_size, num_samples, test_filename,True)
-    
-    
+        
     '''the output computed below takes the closest of top 3 most voted, which is closest to the previous'''
     #pred_label = NetworkOutput.MajorityVoteClosestToPrevious(output_data, test_label.shape[0])
     #pred_label = NetworkOutput.MajorityVoteClosestToPrevious2(output_data, test_label.shape[0], test_label[0])
@@ -43,10 +42,11 @@ def run_vgram(train_filename, train_path, test_filename, test_path,
     result_file = open(result_filename, 'w')
     for frame_radius in xrange(19):
         result = EvaluateOutput(pred_label, test_label.flatten(), max_number_of_frames=frame_radius)
+        print (result * 100.0)
         print>>result_file, (result * 100.0)
     
-    np.savetxt(output_filename, [pred_label, test_label])
-    np.savetxt(coords_filename, [x, y])
+    #np.savetxt(output_filename, [pred_label, test_label])
+    #np.savetxt(coords_filename, [x, y])
 
 if __name__ == '__main__':
     run_vgram(params['dataset']['train']['file'],

@@ -1,0 +1,1 @@
+/usr/bin/c++    -fopenmp -O3 -DNDEBUG -mpopcnt -ffast-math -fPIC    CMakeFiles/vgram-test.dir/vgram_main.cpp.o CMakeFiles/vgram-test.dir/vgram_files.cpp.o  -o vgram-test -rdynamic vgram.so -lm -Wl,-rpath,/mnt/data/CAVALCANTE/SABGL/pyram/src 

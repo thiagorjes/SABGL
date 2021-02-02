@@ -110,36 +110,37 @@ Test(VG_RAM_WNN *vg_ram_wnn, int *testing_set, int sample_class_i, int idx)
 	int sample, neuron;
 	int nearest_pattern;
 	int *network_input;
-	unsigned int *bit_pattern[1];
-	int *candidate_patterns[1];
-
+	unsigned int bit_pattern;
+	int candidate_patterns;
+	printf("entrou no teste\n");
 	sample = idx;
 	
 	network_input = testing_set;
 
 
-	if ((bit_pattern[0] = (unsigned int *) AllocMemory((size_t)vg_ram_wnn->memory_bit_group_size * PATTERN_UNIT_SIZE/8)) == NULL)
+	if ((bit_pattern = (unsigned int *) AllocMemory((size_t)vg_ram_wnn->memory_bit_group_size * PATTERN_UNIT_SIZE/8)) == NULL)
 		Error("Could not allocate bit_pattern in Test().", "", "");
 
-	if ((candidate_patterns[0] = (int *) AllocMemory((size_t)vg_ram_wnn->memory_size * sizeof(int))) == NULL)
+	if ((candidate_patterns = (int *) AllocMemory((size_t)vg_ram_wnn->memory_size * sizeof(int))) == NULL)
 		Error("Could not allocate candidate_patterns in Test().", "", "");
 	
-	
+	printf("entrando no loop de neurorios\n");
 	for (neuron = 0; neuron < vg_ram_wnn->number_of_neurons; neuron++)
 	{
-		BuildBitPattern(bit_pattern[0], 
+		printf("build bit pattern\n");
+		BuildBitPattern(bit_pattern, 
 		&(vg_ram_wnn->synapses[neuron * vg_ram_wnn->number_of_synapses_per_neuron]),
 		network_input, vg_ram_wnn->number_of_synapses_per_neuron);
-		
-		nearest_pattern = FindNearestPattern(bit_pattern[0], 
+		printf("find Nearest Pattern\n");
+		nearest_pattern = FindNearestPattern(bit_pattern, 
 		GetNeuronMemoryByNeuron(vg_ram_wnn->memories,
 					vg_ram_wnn->memory_size,
 					vg_ram_wnn->memory_bit_group_size,
 					neuron),
-		candidate_patterns[0],
+		candidate_patterns,
 		vg_ram_wnn->memory_size,
 		vg_ram_wnn->number_of_synapses_per_neuron, vg_ram_wnn->memory_bit_group_size);
-		
+		printf("Get Neuron Memory By Sample\n");
 		// O último inteiro do vetor de memória contém a saída memorizada junto com o padrão de bits
 		vg_ram_wnn->network_output[sample * vg_ram_wnn->number_of_neurons + neuron] =
 			GetNeuronMemoryBySample(vg_ram_wnn->memories, vg_ram_wnn->memory_bit_group_size, nearest_pattern)[vg_ram_wnn->memory_bit_group_size];

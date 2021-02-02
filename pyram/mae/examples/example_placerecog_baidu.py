@@ -1,6 +1,6 @@
-from vgram.vgram_core import VGRAM
-from vgram.vgram_output import NetworkOutput
-from vgram.vgram_synapse import ConnectionGaussian, ConnectionRandom, ConnectionInput
+from pyram.mae.vgram.vgram_core import VGRAM
+from pyram.mae.vgram.vgram_output import NetworkOutput
+from pyram.mae.vgram.vgram_synapse import ConnectionGaussian, ConnectionRandom, ConnectionInput
 from example_placerecog_utils import LoadDatasetBaidu, ClearFalseNegatives, EvaluateOutput
 from example_placerecog_config import params
 import numpy as np
@@ -8,9 +8,9 @@ import numpy as np
 def run_vgram(train_filename, train_path, test_filename, test_path, 
               result_filename, output_filename, coords_filename,
               batch_size):
-    print "entrou"
+    
     network = VGRAM(params['output']['width'], params['output']['height'])
-    print "carregou parametros"
+    
     network.connections = [
                            ConnectionRandom(input_layer=ConnectionInput(params['input']['width'], params['input']['height'], 0),
                                             synapses=params['connection_rand']['synapses']),
@@ -19,15 +19,15 @@ def run_vgram(train_filename, train_path, test_filename, test_path,
                                               radius=params['connection_gaus']['radius'])
                            ]
     
-    memory_size, input_size, num_samples = LoadDatasetBaidu(train_filename, train_path)
-    print 'Train size:', memory_size, input_size, num_samples, filename  
+    memory_size, input_size, num_samples = LoadDatasetBaidu(train_filename)
+    print 'Train size:', memory_size, input_size, num_samples, train_filename  
 
-    network.train(memory_size, input_size, num_samples, filename,False)
+    network.train(memory_size, input_size, num_samples, train_filename,False)
 
-    memory_size, input_size, num_samples  = LoadDatasetBaidu(test_filename, test_path)
-    print 'Test size:', memory_size, input_size, num_samples, filename  
+    memory_size, input_size, num_samples  = LoadDatasetBaidu(test_filename)
+    print 'Test size:', memory_size, input_size, num_samples, test_filename  
     
-    output_data = network.test(memory_size, input_size, num_samples, filename,False)
+    output_data, test_label = network.test(memory_size, input_size, num_samples, test_filename,False)
     
     '''the output computed below takes the closest of top 3 most voted, which is closest to the previous'''
     #pred_label = NetworkOutput.MajorityVoteClosestToPrevious(output_data, test_label.shape[0])
@@ -37,15 +37,16 @@ def run_vgram(train_filename, train_path, test_filename, test_path,
     '''the output computed below takes the most voted and doesn't take into consideration the confidence'''
     pred_label, confidence = NetworkOutput.MajorityVoteAndConfidence(output_data, test_label.shape[0])
     #ClearLowConfidence(pred_label, confidence, 0.1)
-    pred_label[0:batch_size] = test_label[0:batch_size] #disregard first results
+    #pred_label[0:batch_size] = test_label[0:batch_size] #disregard first results
     
     result_file = open(result_filename, 'w')
     for frame_radius in xrange(19):
         result = EvaluateOutput(pred_label, test_label.flatten(), max_number_of_frames=frame_radius)
+        print (result * 100.0)
         print>>result_file, (result * 100.0)
     
-    np.savetxt(output_filename, [pred_label, test_label])
-    np.savetxt(coords_filename, [x, y])
+    #np.savetxt(output_filename, [pred_label, test_label])
+    #np.savetxt(coords_filename, [x, y])
 
 if __name__ == '__main__':
     run_vgram(params['dataset']['train']['file'],

@@ -17,8 +17,7 @@ def LoadDatasetBaidu(filename):
 
     input_images = ImageProcProxy.emptyDataset(file_list.shape[0], params['input']['width'] * 2, params['input']['height'])
     orig_image_file     = ImageProcProxy.readImageColor(file_list['image'][0])
-    image_file          = cv2.resize(orig_image_file, (params['input']['width'],params['input']['height']))
-    image_crop          = image_file 
+    image_crop          = cv2.resize(orig_image_file, (params['input']['width'],params['input']['height']))
     image_gaus          = ImageProcProxy.applyGaussian(image_crop, params['filter']['gaussian_radius'], params['filter']['gaussian_sigma'])
     image_crop_int      = ImageProcProxy.convertBGR2INT(image_crop)
     image_gaus_int      = ImageProcProxy.convertBGR2INT(image_gaus)
@@ -27,7 +26,7 @@ def LoadDatasetBaidu(filename):
     input_images[0]= ImageProcProxy.concatImages(image_crop_vec, image_gaus_vec)
     return file_list.shape[0],  input_images.shape[1], file_list.shape[0]
 
-def LoadDataset(filename, imagepath):
+def LoadDataset(filename):
     file_list = np.genfromtxt(filename, delimiter=',', names=True, dtype=np.dtype([('image',object), 
                                                                                             ('label', int), 
                                                                                             ('x', float), 
